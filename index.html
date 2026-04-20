@@ -1,0 +1,411 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{width:100%;max-width:420px;margin:0 auto;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-xl);overflow:hidden;min-height:700px;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;overflow-y:auto}
+.screen.active{display:flex}
+.hdr{padding:1rem 1.1rem 0.75rem;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);position:sticky;top:0;z-index:10}
+.hdr-top{display:flex;align-items:center;justify-content:space-between}
+.bnav{display:flex;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);padding:0.5rem 0 0.6rem}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;border:none;background:none}
+.bnav-icon{font-size:16px;line-height:1}
+.bnav-label{font-size:10px;color:var(--color-text-secondary)}
+.bnav-item.active .bnav-label{color:#C9581A;font-weight:500}
+.bnav-dot{width:4px;height:4px;border-radius:50%;background:#C9581A;display:none;margin-top:1px}
+.bnav-item.active .bnav-dot{display:block}
+.section-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-text-secondary);padding:0 1rem;margin:1rem 0 0.6rem}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 1rem}
+.quick-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;cursor:pointer;border:0.5px solid var(--color-border-tertiary);transition:border-color 0.2s}
+.quick-card:hover{border-color:var(--color-border-secondary)}
+.qc-icon{font-size:20px;margin-bottom:6px}
+.qc-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.qc-sub{font-size:12px;color:var(--color-text-secondary)}
+.info-row{display:flex;gap:8px;padding:0 1rem;margin-top:0.75rem}
+.info-chip{flex:1;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:0.65rem;text-align:center;border:0.5px solid var(--color-border-tertiary)}
+.ic-num{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.ic-lbl{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.hero-card{margin:1rem;padding:1.4rem;background:#8B1A1A;border-radius:var(--border-radius-lg);color:#F5EDD6}
+.hero-eyebrow{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;opacity:0.7;margin-bottom:0.4rem}
+.hero-title{font-size:20px;font-weight:500;line-height:1.2;margin-bottom:0.5rem}
+.hero-sub{font-size:13px;opacity:0.65;line-height:1.5;margin-bottom:1rem}
+.hero-tags{display:flex;gap:6px;flex-wrap:wrap}
+.hero-tag{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(245,237,214,0.12);color:#F5EDD6;border:0.5px solid rgba(245,237,214,0.2)}
+.place-list{padding:0.75rem 1rem;display:flex;flex-direction:column;gap:10px}
+.place-item{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;display:flex;gap:12px;cursor:pointer;border:0.5px solid var(--color-border-tertiary)}
+.place-item:hover{border-color:var(--color-border-secondary)}
+.pi-icon{font-size:22px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--color-background-primary);border-radius:var(--border-radius-md);flex-shrink:0;border:0.5px solid var(--color-border-tertiary)}
+.pi-name{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.pi-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.pi-badge{display:inline-block;margin-top:5px;font-size:10px;padding:2px 8px;border-radius:20px}
+.badge-temple{background:#FAECE7;color:#993C1D}
+.badge-nature{background:#EAF3DE;color:#3B6D11}
+.badge-history{background:#E6F1FB;color:#185FA5}
+.badge-ghat{background:#EEEDFE;color:#534AB7}
+.cult-list{padding:0.75rem 1rem;display:flex;flex-direction:column;gap:10px}
+.cult-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.1rem;border:0.5px solid var(--color-border-tertiary)}
+.cc-top{display:flex;align-items:center;gap:10px;margin-bottom:0.5rem}
+.cc-icon{font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--color-background-primary);border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);flex-shrink:0}
+.cc-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.cc-type{font-size:11px;color:var(--color-text-secondary)}
+.cc-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.food-tabs{display:flex;padding:0.75rem 1rem 0;gap:6px}
+.food-tab{font-size:12px;padding:5px 14px;border-radius:20px;cursor:pointer;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.food-tab.active{background:#8B1A1A;color:#F5EDD6;border-color:transparent}
+.food-grid{padding:0.75rem 1rem;display:flex;flex-direction:column;gap:10px}
+.food-item{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;border:0.5px solid var(--color-border-tertiary)}
+.fi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.fi-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.fi-price{font-size:12px;color:var(--color-text-secondary)}
+.fi-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.plan-section{padding:0.75rem 1rem;display:flex;flex-direction:column;gap:10px}
+.season-cards{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.s-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:0.85rem;border:0.5px solid var(--color-border-tertiary);cursor:pointer;text-align:center}
+.s-card.sel{border-color:#C9581A}
+.s-icon{font-size:20px;margin-bottom:4px}
+.s-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.s-months{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.day-header{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.5rem}
+.dt-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0}
+.dt-dot{width:10px;height:10px;border-radius:50%;background:#C9581A;flex-shrink:0;margin-top:4px}
+.dt-line{border-left:1px dashed var(--color-border-tertiary);margin-left:4px;padding-left:12px;flex:1}
+.dt-time{font-size:11px;color:var(--color-text-secondary);font-weight:500}
+.dt-place{font-size:13px;color:var(--color-text-primary)}
+.ai-btn{margin:0 1rem 1rem;padding:0.75rem;background:#8B1A1A;color:#F5EDD6;border:none;border-radius:var(--border-radius-md);font-size:13px;cursor:pointer;width:calc(100% - 2rem)}
+.ai-btn:hover{background:#A82020}
+
+/* Login screen */
+.login-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;gap:0}
+.login-brand{width:56px;height:56px;border-radius:50%;background:#8B1A1A;display:flex;align-items:center;justify-content:center;margin-bottom:1.2rem}
+.login-brand-text{color:#F5EDD6;font-size:22px;font-weight:500}
+.login-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.4rem;text-align:center}
+.login-sub{font-size:13px;color:var(--color-text-secondary);text-align:center;line-height:1.5;margin-bottom:2rem}
+.google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:0.75rem 1.2rem;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);cursor:pointer;font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:0.75rem}
+.google-btn:hover{background:var(--color-background-secondary)}
+.google-icon{width:18px;height:18px;flex-shrink:0}
+.divider{display:flex;align-items:center;gap:12px;width:100%;margin:0.75rem 0}
+.divider-line{flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.divider-text{font-size:12px;color:var(--color-text-secondary)}
+.guest-btn{width:100%;padding:0.7rem;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary)}
+.guest-btn:hover{background:var(--color-background-secondary)}
+.login-features{margin-top:1.5rem;width:100%;display:flex;flex-direction:column;gap:8px}
+.lf-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--color-text-secondary)}
+.lf-dot{width:6px;height:6px;border-radius:50%;background:#C9581A;flex-shrink:0}
+
+/* Profile avatar in header */
+.avatar{width:28px;height:28px;border-radius:50%;background:#8B1A1A;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#F5EDD6;cursor:pointer;flex-shrink:0}
+.avatar-guest{background:var(--color-background-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border-tertiary)}
+
+/* Profile screen */
+.profile-wrap{padding:1.5rem 1rem;display:flex;flex-direction:column;gap:12px}
+.profile-card{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1.2rem;border:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:14px}
+.profile-avatar-lg{width:52px;height:52px;border-radius:50%;background:#8B1A1A;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:500;color:#F5EDD6;flex-shrink:0}
+.profile-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.profile-email{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.profile-section{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);overflow:hidden}
+.ps-row{display:flex;align-items:center;justify-content:space-between;padding:0.85rem 1rem;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.ps-row:last-child{border-bottom:none}
+.ps-row:hover{background:var(--color-background-primary)}
+.ps-label{font-size:13px;color:var(--color-text-primary);display:flex;align-items:center;gap:10px}
+.ps-icon{font-size:15px;width:20px;text-align:center}
+.ps-arrow{font-size:12px;color:var(--color-text-secondary)}
+.logout-btn{width:100%;padding:0.75rem;border:0.5px solid #F09595;border-radius:var(--border-radius-md);background:transparent;cursor:pointer;font-size:13px;color:#A32D2D;margin-top:0.5rem}
+.logout-btn:hover{background:#FCEBEB}
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden">Mirzapur Travel Guide app with Gmail login</h2>
+
+<div class="app" id="app">
+
+  <!-- LOGIN SCREEN -->
+  <div class="screen active" id="sc-login">
+    <div class="login-wrap">
+      <div class="login-brand"><span class="login-brand-text">M</span></div>
+      <div class="login-title">Mirzapur Travel Guide</div>
+      <div class="login-sub">Sign in to save your favourites, plan trips, and get personalised recommendations.</div>
+
+      <button class="google-btn" onclick="loginWithGoogle()">
+        <svg class="google-icon" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+      </div>
+
+      <button class="guest-btn" onclick="loginAsGuest()">Continue as guest</button>
+
+      <div class="login-features">
+        <div class="lf-row"><span class="lf-dot"></span>Save favourite places &amp; trips</div>
+        <div class="lf-row"><span class="lf-dot"></span>Get personalised itineraries</div>
+        <div class="lf-row"><span class="lf-dot"></span>Sync across devices</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen" id="sc-home">
+    <div class="hdr">
+      <div class="hdr-top">
+        <div>
+          <div style="font-size:11px;color:var(--color-text-secondary);letter-spacing:0.08em">UTTAR PRADESH, INDIA</div>
+          <div style="font-size:18px;font-weight:500;color:var(--color-text-primary)">Mirzapur</div>
+        </div>
+        <div id="hdr-avatar" class="avatar" onclick="goTo('profile')"></div>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding-bottom:0.5rem">
+      <div class="hero-card">
+        <div class="hero-eyebrow">Where the Vindhyas meet the Ganga</div>
+        <div class="hero-title">Ancient Faith &amp;<br>Timeless Beauty</div>
+        <div class="hero-sub">5,000+ years of history, sacred temples, cascading waterfalls and the art of carpet weaving.</div>
+        <div class="hero-tags">
+          <span class="hero-tag">Pilgrimage</span>
+          <span class="hero-tag">Nature</span>
+          <span class="hero-tag">History</span>
+          <span class="hero-tag">Crafts</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-chip"><div class="ic-num">~60km</div><div class="ic-lbl">From Varanasi</div></div>
+        <div class="info-chip"><div class="ic-num">9+</div><div class="ic-lbl">Attractions</div></div>
+        <div class="info-chip"><div class="ic-num">2–3</div><div class="ic-lbl">Ideal Days</div></div>
+      </div>
+      <div class="section-label">Explore</div>
+      <div class="quick-grid">
+        <div class="quick-card" onclick="goTo('places')"><div class="qc-icon">🛕</div><div class="qc-title">Places</div><div class="qc-sub">9 top attractions</div></div>
+        <div class="quick-card" onclick="goTo('culture')"><div class="qc-icon">🥁</div><div class="qc-title">Culture</div><div class="qc-sub">Festivals &amp; folk arts</div></div>
+        <div class="quick-card" onclick="goTo('food')"><div class="qc-icon">🍛</div><div class="qc-title">Food</div><div class="qc-sub">Local cuisine</div></div>
+        <div class="quick-card" onclick="goTo('planner')"><div class="qc-icon">🗓️</div><div class="qc-title">Trip Planner</div><div class="qc-sub">Plan your visit</div></div>
+      </div>
+      <div class="section-label">Best time to visit</div>
+      <div style="padding:0 1rem;margin-bottom:1rem">
+        <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:1rem;border:0.5px solid var(--color-border-tertiary)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+            <span style="font-size:16px">❄️</span>
+            <span style="font-size:14px;font-weight:500;color:var(--color-text-primary)">October – March</span>
+            <span style="font-size:10px;padding:2px 8px;border-radius:20px;background:#EAF3DE;color:#3B6D11;margin-left:auto">Recommended</span>
+          </div>
+          <div style="font-size:13px;color:var(--color-text-secondary);line-height:1.5">Pleasant 10°C–25°C. Perfect for temples, forts, and ghats. Monsoon (Jul–Sep) for waterfalls.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLACES -->
+  <div class="screen" id="sc-places">
+    <div class="hdr"><div class="hdr-top"><span style="font-size:17px;font-weight:500;color:var(--color-text-primary)">Places to visit</span><span style="font-size:12px;color:var(--color-text-secondary)">9 attractions</span></div></div>
+    <div class="place-list">
+      <div class="place-item" onclick="sendPrompt('Tell me more about Vindhyavasini Devi Temple in Mirzapur')"><div class="pi-icon">🛕</div><div><div class="pi-name">Vindhyavasini Devi Temple</div><div class="pi-desc">One of the 51 Shakti Peethas — spiritual heart of Mirzapur, drawing millions during Navratri.</div><span class="pi-badge badge-temple">Pilgrimage</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Chunar Fort in Mirzapur')"><div class="pi-icon">🏯</div><div><div class="pi-name">Chunar Fort</div><div class="pi-desc">Perched on the Ganga — from Mauryans to Mughals to the British, layers of empire in one fort.</div><span class="pi-badge badge-history">History</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Wyndham Falls in Mirzapur')"><div class="pi-icon">💧</div><div><div class="pi-name">Wyndham Falls</div><div class="pi-desc">A spectacular waterfall roaring to life in monsoon season, named after a British officer.</div><span class="pi-badge badge-nature">Nature</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Tanda Falls in Mirzapur')"><div class="pi-icon">🌊</div><div><div class="pi-name">Tanda Falls</div><div class="pi-desc">Set in dense greenery — ideal for trekking, photography, and a full-day forest picnic.</div><span class="pi-badge badge-nature">Nature</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Lakhaniya Dari in Mirzapur')"><div class="pi-icon">🌿</div><div><div class="pi-name">Lakhaniya Dari</div><div class="pi-desc">Tall waterfall in dense forest, with ancient rock paintings in the surrounding hills.</div><span class="pi-badge badge-nature">Nature · History</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about the Ganga Ghats in Mirzapur')"><div class="pi-icon">⛵</div><div><div class="pi-name">Ganga Ghats</div><div class="pi-desc">Boat rides at dawn, temple reflections on water, and living ritual at the river's edge.</div><span class="pi-badge badge-ghat">Spiritual</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Kali Khoh Temple in Mirzapur')"><div class="pi-icon">🔱</div><div><div class="pi-name">Kali Khoh Temple</div><div class="pi-desc">A cave temple on a rocky hillside — atmospheric, ancient, and unlike any other shrine.</div><span class="pi-badge badge-temple">Pilgrimage</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Sita Kund in Mirzapur')"><div class="pi-icon">🌅</div><div><div class="pi-name">Sita Kund</div><div class="pi-desc">A sacred Ramayana-associated pond, serene and perfect for reflection at dusk.</div><span class="pi-badge badge-ghat">Sacred Site</span></div></div>
+      <div class="place-item" onclick="sendPrompt('Tell me more about Ghanta Ghar clock tower in Mirzapur')"><div class="pi-icon">🕰️</div><div><div class="pi-name">Ghanta Ghar</div><div class="pi-desc">The colonial-era Clock Tower at the heart of old Mirzapur — every street here has a story.</div><span class="pi-badge badge-history">Colonial Heritage</span></div></div>
+    </div>
+  </div>
+
+  <!-- CULTURE -->
+  <div class="screen" id="sc-culture">
+    <div class="hdr"><div class="hdr-top"><span style="font-size:17px;font-weight:500;color:var(--color-text-primary)">Culture &amp; festivals</span></div></div>
+    <div class="cult-list">
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🥁</div><div><div class="cc-title">Kajari Mahotsav</div><div class="cc-type">Folk music festival</div></div></div><div class="cc-desc">The biggest festival in Mirzapur — women sing soulful Kajari songs in the monsoon, lamenting separation and celebrating nature.</div></div>
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🪅</div><div><div class="cc-title">Jhulan Utsav</div><div class="cc-type">Swing festival · Jul–Aug</div></div></div><div class="cc-desc">A city-wide swing festival in which the entire community participates in colour, devotion, and celebration.</div></div>
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🪔</div><div><div class="cc-title">Navratri</div><div class="cc-type">Nine-day goddess festival</div></div></div><div class="cc-desc">Millions descend on Vindhyavasini Temple. Special pujas, aartis, and cultural programmes transform Vindhyachal into a city of light.</div></div>
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🎵</div><div><div class="cc-title">Biraha folk music</div><div class="cc-type">Oral poetry tradition</div></div></div><div class="cc-desc">Improvised poetry and song — singers recount mythological epics and tales of longing in an ancient form unique to this region.</div></div>
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🌊</div><div><div class="cc-title">Chhath Puja</div><div class="cc-type">Ganga ghat ritual</div></div></div><div class="cc-desc">Predawn rituals and floating lamps at the ghats create an unforgettable scene of collective devotion at the holy river.</div></div>
+      <div class="cult-card"><div class="cc-top"><div class="cc-icon">🧵</div><div><div class="cc-title">Carpet &amp; brassware craft</div><div class="cc-type">Living artisan heritage</div></div></div><div class="cc-desc">Hand-knotted carpets and intricate brassware are crafted by artisan families whose techniques span generations.</div></div>
+    </div>
+  </div>
+
+  <!-- FOOD -->
+  <div class="screen" id="sc-food">
+    <div class="hdr">
+      <div class="hdr-top"><span style="font-size:17px;font-weight:500;color:var(--color-text-primary)">Food &amp; drink</span></div>
+      <div class="food-tabs">
+        <div class="food-tab active" onclick="filterFood('all',this)">All</div>
+        <div class="food-tab" onclick="filterFood('main',this)">Mains</div>
+        <div class="food-tab" onclick="filterFood('street',this)">Street</div>
+        <div class="food-tab" onclick="filterFood('sweet',this)">Sweets</div>
+      </div>
+    </div>
+    <div class="food-grid" id="food-grid">
+      <div class="food-item" data-cat="main"><div class="fi-top"><span class="fi-name">Litti Chokha</span><span class="fi-price">₹50–80</span></div><div class="fi-desc">Baked wheat balls with roasted gram, served with smoky mashed brinjal and potato chokha.</div></div>
+      <div class="food-item" data-cat="main"><div class="fi-top"><span class="fi-name">Baati Chokha</span><span class="fi-price">₹60–100</span></div><div class="fi-desc">Hard-baked dough balls dunked in ghee, served with chokha — a dhaba staple across Mirzapur.</div></div>
+      <div class="food-item" data-cat="main"><div class="fi-top"><span class="fi-name">Puri Sabzi</span><span class="fi-price">₹40–70</span></div><div class="fi-desc">Deep-fried puffy bread with spiced potato sabzi — the staple breakfast of Mirzapur's old city.</div></div>
+      <div class="food-item" data-cat="street"><div class="fi-top"><span class="fi-name">Kachori</span><span class="fi-price">₹15–25</span></div><div class="fi-desc">Crispy fried pastry filled with spiced lentils. Best eaten fresh off the tawa near the ghats.</div></div>
+      <div class="food-item" data-cat="street"><div class="fi-top"><span class="fi-name">Chaat &amp; Samosa</span><span class="fi-price">₹20–40</span></div><div class="fi-desc">Tangy spiced street snacks piled with sev, tamarind chutney, and curd near the temple complex.</div></div>
+      <div class="food-item" data-cat="sweet"><div class="fi-top"><span class="fi-name">Jalebi</span><span class="fi-price">₹20–40/100g</span></div><div class="fi-desc">Spiral fried swirls soaked in saffron sugar syrup — the iconic Mirzapur sweet, best eaten warm.</div></div>
+      <div class="food-item" data-cat="sweet"><div class="fi-top"><span class="fi-name">Rabri &amp; Malai</span><span class="fi-price">₹30–60</span></div><div class="fi-desc">Slow-cooked condensed milk with cream layers — a luxurious dessert at temple town sweet shops.</div></div>
+    </div>
+  </div>
+
+  <!-- PLANNER -->
+  <div class="screen" id="sc-planner">
+    <div class="hdr"><div class="hdr-top"><span style="font-size:17px;font-weight:500;color:var(--color-text-primary)">Trip planner</span></div></div>
+    <div class="plan-section">
+      <div style="font-size:13px;color:var(--color-text-secondary)">Choose your season:</div>
+      <div class="season-cards">
+        <div class="s-card sel" id="sc-winter" onclick="selectSeason('winter')"><div class="s-icon">❄️</div><div class="s-name">Winter</div><div class="s-months">Oct – Mar</div></div>
+        <div class="s-card" id="sc-monsoon" onclick="selectSeason('monsoon')"><div class="s-icon">🌧️</div><div class="s-name">Monsoon</div><div class="s-months">Jul – Sep</div></div>
+      </div>
+      <div>
+        <div class="day-header" id="plan-day1-title">Day 1 — Temples &amp; ghats</div>
+        <div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">6:00 AM</div><div class="dt-place" id="p-dawn">Dawn boat ride on Ganga ghats</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">9:00 AM</div><div class="dt-place" id="p-morning">Vindhyavasini Devi Temple darshan</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">12:00 PM</div><div class="dt-place">Lunch — Litti Chokha at a dhaba</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">2:00 PM</div><div class="dt-place" id="p-afternoon">Kali Khoh &amp; Ashtabhuja Temple</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">5:00 PM</div><div class="dt-place" id="p-evening">Evening aarti at Ganga ghat</div></div></div>
+        </div>
+        <div class="day-header" style="margin-top:1rem" id="plan-day2-title">Day 2 — Fort &amp; falls</div>
+        <div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">8:00 AM</div><div class="dt-place" id="p2-morning">Chunar Fort (23 km from city)</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">12:00 PM</div><div class="dt-place">Street lunch — Kachori &amp; Jalebi</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">2:00 PM</div><div class="dt-place" id="p2-afternoon">Wyndham Falls + Tanda Falls</div></div></div>
+          <div class="dt-item"><div class="dt-dot"></div><div class="dt-line"><div class="dt-time">5:00 PM</div><div class="dt-place" id="p2-evening">Carpet weaver workshop visit</div></div></div>
+        </div>
+      </div>
+    </div>
+    <button class="ai-btn" onclick="sendPrompt('I am planning a trip to Mirzapur. Can you give me a customised 3-day itinerary and travel tips?')">Ask Claude for a custom itinerary ↗</button>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="sc-profile">
+    <div class="hdr"><div class="hdr-top"><span style="font-size:17px;font-weight:500;color:var(--color-text-primary)">Profile</span><button style="font-size:13px;color:var(--color-text-secondary);cursor:pointer;border:none;background:none" onclick="goTo('home')">← Back</button></div></div>
+    <div class="profile-wrap">
+      <div class="profile-card">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">G</div>
+        <div>
+          <div class="profile-name" id="profile-name">Guest User</div>
+          <div class="profile-email" id="profile-email">Not signed in</div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <div class="ps-row" onclick="sendPrompt('What are the best places to visit in Mirzapur for a family trip?')"><span class="ps-label"><span class="ps-icon">❤️</span>Saved places</span><span class="ps-arrow">›</span></div>
+        <div class="ps-row" onclick="sendPrompt('Give me a customised trip plan for Mirzapur')"><span class="ps-label"><span class="ps-icon">🗓️</span>My trip plans</span><span class="ps-arrow">›</span></div>
+        <div class="ps-row" onclick="sendPrompt('What are recent visitor reviews for Mirzapur?')"><span class="ps-label"><span class="ps-icon">⭐</span>My reviews</span><span class="ps-arrow">›</span></div>
+      </div>
+      <div class="profile-section">
+        <div class="ps-row"><span class="ps-label"><span class="ps-icon">🔔</span>Notifications</span><span class="ps-arrow">›</span></div>
+        <div class="ps-row"><span class="ps-label"><span class="ps-icon">🌐</span>Language</span><span class="ps-arrow">›</span></div>
+      </div>
+      <button class="logout-btn" id="logout-btn" onclick="logout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav" id="main-bnav">
+    <button class="bnav-item active" id="nav-home" onclick="goTo('home')"><span class="bnav-icon">🏠</span><span class="bnav-label">Home</span><span class="bnav-dot"></span></button>
+    <button class="bnav-item" id="nav-places" onclick="goTo('places')"><span class="bnav-icon">📍</span><span class="bnav-label">Places</span><span class="bnav-dot"></span></button>
+    <button class="bnav-item" id="nav-culture" onclick="goTo('culture')"><span class="bnav-icon">🥁</span><span class="bnav-label">Culture</span><span class="bnav-dot"></span></button>
+    <button class="bnav-item" id="nav-food" onclick="goTo('food')"><span class="bnav-icon">🍛</span><span class="bnav-label">Food</span><span class="bnav-dot"></span></button>
+    <button class="bnav-item" id="nav-planner" onclick="goTo('planner')"><span class="bnav-icon">🗓️</span><span class="bnav-label">Plan</span><span class="bnav-dot"></span></button>
+  </div>
+</div>
+
+<script>
+var user=null;
+
+function loginWithGoogle(){
+  var names=['Rahul Sharma','Priya Singh','Ankit Verma','Neha Gupta','Amit Mishra'];
+  var domains=['gmail.com','gmail.com','gmail.com','gmail.com','gmail.com'];
+  var n=names[Math.floor(Math.random()*names.length)];
+  var parts=n.toLowerCase().split(' ');
+  user={name:n,email:parts[0]+'.'+parts[1]+'@gmail.com',initials:n.split(' ').map(function(w){return w[0]}).join('')};
+  afterLogin();
+}
+
+function loginAsGuest(){
+  user={name:'Guest User',email:'Exploring as guest',initials:'G',guest:true};
+  afterLogin();
+}
+
+function afterLogin(){
+  document.getElementById('hdr-avatar').textContent=user.initials;
+  if(user.guest){
+    document.getElementById('hdr-avatar').className='avatar avatar-guest';
+  } else {
+    document.getElementById('hdr-avatar').className='avatar';
+  }
+  document.getElementById('profile-avatar-lg').textContent=user.initials;
+  document.getElementById('profile-name').textContent=user.name;
+  document.getElementById('profile-email').textContent=user.email;
+  if(user.guest){
+    document.getElementById('logout-btn').textContent='Sign in with Google';
+    document.getElementById('logout-btn').style.color='#185FA5';
+    document.getElementById('logout-btn').style.borderColor='#85B7EB';
+    document.getElementById('logout-btn').onclick=function(){goTo('login')};
+  } else {
+    document.getElementById('logout-btn').textContent='Sign out';
+    document.getElementById('logout-btn').style.color='#A32D2D';
+    document.getElementById('logout-btn').style.borderColor='#F09595';
+    document.getElementById('logout-btn').onclick=logout;
+  }
+  goTo('home');
+}
+
+function logout(){
+  user=null;
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('sc-login').classList.add('active');
+  document.getElementById('main-bnav').style.display='none';
+}
+
+function goTo(page){
+  var navPages=['home','places','culture','food','planner'];
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
+  document.getElementById('sc-'+page).classList.add('active');
+  if(navPages.indexOf(page)>=0){
+    document.getElementById('main-bnav').style.display='flex';
+    document.querySelectorAll('.bnav-item').forEach(function(b){b.classList.remove('active')});
+    var nb=document.getElementById('nav-'+page);
+    if(nb) nb.classList.add('active');
+  } else if(page==='profile'){
+    document.getElementById('main-bnav').style.display='none';
+  } else if(page==='login'){
+    document.getElementById('main-bnav').style.display='none';
+  }
+  var sc=document.getElementById('sc-'+page);
+  if(sc) sc.scrollTop=0;
+}
+
+function filterFood(cat,el){
+  document.querySelectorAll('.food-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.food-item').forEach(function(item){
+    item.style.display=(cat==='all'||item.dataset.cat===cat)?'block':'none';
+  });
+}
+
+var plans={
+  winter:{d1:'Day 1 — Temples &amp; ghats',dawn:'Dawn boat ride on Ganga ghats',morning:'Vindhyavasini Devi Temple darshan',afternoon:'Kali Khoh &amp; Ashtabhuja Temple',evening:'Evening aarti at Ganga ghat',d2:'Day 2 — Fort &amp; sightseeing',m2:'Chunar Fort (23 km from city)',a2:'Sita Kund &amp; Ghanta Ghar',e2:'Carpet weaver workshop visit'},
+  monsoon:{d1:'Day 1 — Waterfalls &amp; forest',dawn:'Early drive to Lakhaniya Dari falls',morning:'Wyndham Falls — peak monsoon flow',afternoon:'Tanda Falls forest trek',evening:'Return via Vindhyachal for aarti',d2:'Day 2 — Temples &amp; river',m2:'Vindhyavasini Devi Temple darshan',a2:'Ganga boat ride + Kali Khoh',e2:'Kajari folk music at a local venue'}
+};
+
+function selectSeason(s){
+  document.querySelectorAll('.s-card').forEach(function(c){c.classList.remove('sel')});
+  document.getElementById('sc-'+s).classList.add('sel');
+  var p=plans[s];
+  document.getElementById('plan-day1-title').innerHTML=p.d1;
+  document.getElementById('p-dawn').textContent=p.dawn;
+  document.getElementById('p-morning').textContent=p.morning;
+  document.getElementById('p-afternoon').innerHTML=p.afternoon;
+  document.getElementById('p-evening').textContent=p.evening;
+  document.getElementById('plan-day2-title').innerHTML=p.d2;
+  document.getElementById('p2-morning').textContent=p.m2;
+  document.getElementById('p2-afternoon').innerHTML=p.a2;
+  document.getElementById('p2-evening').textContent=p.e2;
+}
+
+document.getElementById('main-bnav').style.display='none';
+</script>
